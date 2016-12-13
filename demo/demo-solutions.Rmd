@@ -1,10 +1,11 @@
 ---
-title: 'Intro Session: Motivating reproducibility'
+title: 'R Markdown Demo'
 output:
   html_document:
     fig_height: 3
     fig_width: 6
-  pdf_document: default
+    toc: true
+    toc_float: true
 ---
 
 This RMarkdown file contains R code you can use to complete the exercises from the Intro
@@ -12,7 +13,7 @@ session. To see the output simply click on *Knit HTML* above. This might prompt 
 install and load some required packages, specifically `knitr`. Just click yes, and the a 
 document including this narrative, the R code, and figures should pop up.
 
-## Data:
+## Data
 
 The `read.csv` function is used to read the data into R. Note that the argument provided 
 for this function is the complete path that leads to the dataset from your current 
@@ -23,7 +24,7 @@ as a character string, hence in quotation marks.
 gap_5060 <- read.csv("data/gapminder-5060.csv")
 ```
 
-## Packages:
+## Packages
 
 We will use the `ggplot2` and `dplyr` packages to make the plots for these exercises. 
 
@@ -38,21 +39,23 @@ At this point you should have installed these packages using `install.packages()
 
 Now we need to explicitly load the packages:
 
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 library("ggplot2")
 library("dplyr")
 ```
 
+## Demo
+
 #### Task 1: Visualize life expectancy over time for Canada in the 1950s and 1960s using a line plot.
 
 1. Filter the data for Canada only:
-```{r}
+```{r ca-filter-5060}
 gap_5060_CA <- gap_5060 %>%
   filter(country == "Canada")
 ```
 
 2. Visaualize:
-```{r}
+```{r ca-viz-5060}
 ggplot(data = gap_5060_CA, aes(x = year, y = lifeExp)) +
   geom_line()
 ```
@@ -62,7 +65,8 @@ ggplot(data = gap_5060_CA, aes(x = year, y = lifeExp)) +
 - `mutate` for creating a new variables
 - `replace` for replacing a data entry in a specific
 location as determined by the logical statement `(country == "Canada" & year == 1957)`
-```{r}
+
+```{r data-correct}
 gap_5060 <- gap_5060 %>%
   mutate(lifeExp = replace(lifeExp, (country == "Canada" & year == 1957), 69.96)) %>%
   as.data.frame()
@@ -72,7 +76,8 @@ gap_5060 <- gap_5060 %>%
 
 Exact same code as before, but note that the contents of `gap_5060` are different as it 
 has been updated in the previous task.
-```{r}
+
+```{r ca-viz-5060-correct}
 gap_5060_CA <- gap_5060 %>%
   filter(country == "Canada")
 
@@ -84,7 +89,8 @@ ggplot(data = gap_5060_CA, aes(x = year, y = lifeExp)) +
 
 - `%in%` for logical operator testing if a country's name is in the list provided
 - Same visualization code as before, only difference is the input dataset
-```{r}
+
+```{r na-viz-5060}
 gap_5060_NA <- gap_5060 %>%
   filter(country %in% c("Canada", "Mexico", "United States"))
 
@@ -95,20 +101,23 @@ ggplot(data = gap_5060_NA, aes(x = year, y = lifeExp, color = country)) +
 #### Extending your analysis with new data:
 
 Load the new data:
-```{r}
+
+```{r more-data-load}
 gap_7080 <- read.csv("data/gapminder-7080.csv")
 gap_90plus <- read.csv("data/gapminder-90plus.csv")
 ```
 
 Cobine data frames with `rbind` (**r**ow bind):
-```{r}
+
+```{r combine-data}
 gap <- rbind(gap_5060, gap_7080, gap_90plus)
 ```
 
 Make the same plots, with the same code, just changing the input data frame:
 
 1. Canada only:
-```{r}
+
+```{r ca-viz-all}
 gap_ca <- gap %>%
   filter(country == "Canada")
 
@@ -117,10 +126,19 @@ ggplot(data = gap_ca, aes(x = year, y = lifeExp)) +
 ```
 
 2. North America:
-```{r}
+
+```{r na-viz-all}
 gap_NA <- gap %>%
   filter(country %in% c("Canada", "Mexico", "United States"))
 
 ggplot(data = gap_NA, aes(x = year, y = lifeExp, color = country)) +
   geom_line()
 ```
+
+## Inline code
+
+```{r object-for-inline}
+x <- 2 * 2
+```
+
+I have `r x` cats.
